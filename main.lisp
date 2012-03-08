@@ -17,12 +17,15 @@
         ((<= k n) 
             (SET 'b (LIST (cpp n k)) ))))
 
-(DEFUN funu (n) (COND ((= n 0) (SET 'u '(x^4))) 
-        ((= n 1) (SET 'u '(4x^3))) 
-        ((= n 2) (SET 'u '(12x^2))) 
-        ((= n 3) (SET 'u '(24x))) 
-        ((= n 4) (SET 'u '(24)))
-        ((> n 4) (SET 'u '(0)))))
+(DEFUN funu (n) (COND 
+                  ((= n 0) (SET 'u (list '1 'x^4))) 
+                  ((= n 1) (SET 'u (list '4 'x^3))) 
+                  ((= n 2) (SET 'u (list '12 'x^2))) 
+                  ((= n 3) (SET 'u (list '24 'x))) 
+                  ((= n 4) (SET 'u (list '24)))
+                  ((> n 4) (SET 'u (list '0)))))
+
+
 
 ; производная от sin
 (DEFUN funv (n) (COND   
@@ -46,6 +49,14 @@ is replaced with replacement."
             when pos do (write-string replacement out)
             while pos)))
 
+(defun simplify (fir sec)
+  (prog nil (set 'sd ())
+        ;(print (car fir))
+        ;(print (car sec))
+        (set 'sd (* (car fir) (car sec)))
+        (return (list sd))
+  ))
+
 (DEFUN proizv (n) 
   (prog NIL (SET 'pr ()) 
         (loop for i from 0 TO n DO 
@@ -53,16 +64,16 @@ is replaced with replacement."
                    (if (not (eq (car (funu (- n i))) 0))
                        (append pr 
                                (append '(+)) 
-                               (bk n (- n i)) 
-                               (append '(*)) 
-                               (append (funu (- n i)) 
-                                       (append '(*)) 
-                                       (append (funv (- n i))))))))
+                               ;(bk n (- n i)) 
+                               
+                               (append (simplify (bk n (- n i)) (funu (- n i))))
+                               (append '(*))
+                               (append (funv (- n i)))))))
         (set 'pr (cdr pr))
         ;(print (write-to-string pr)) 
         (set 'res_str (write-to-string pr)) ; list in string
         (set 'res_str1 (replace-all res_str " " ""))
         (set 'res_str1 (replace-all res_str1 "DIFFERENTIATE::" ""))
-        (princ res_str1)
-        ;(return pr)
+        ;(princ res_str1)
+        (return res_str1)
         ))
