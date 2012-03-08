@@ -27,12 +27,17 @@
 
 
 
+(defun part_of_simple (n) (cond 
+    ((= n 0) (set 'y ()))
+    ((not (= n 0)) (set 'y (list 'a^ n '*)))
+  ))
+
 ; производная от sin
 (DEFUN funv (n) (COND   
-        ((= (REM n 4) 0) (SET 'v (LIST 'a^ n '(sin(ax)))))  
-        ((= (REM n 4) 1) (SET 'v (LIST 'a^ n '(cos(ax)))))
-        ((= (REM n 4) 2) (SET 'v (LIST 'a^ n '(- sin(ax)))))
-        ((= (REM n 4) 3) (SET 'v (LIST 'a^ n '(- cos(ax)))))))
+        ((= (REM n 4) 0) (SET 'v (part_of_simple n)) (append v (list '(sin(ax)))))  
+        ((= (REM n 4) 1) (SET 'v (part_of_simple n)) (append v (list '(cos(ax)))))
+        ((= (REM n 4) 2) (SET 'v (part_of_simple n)) (append v (list '(- sin(ax)))))
+        ((= (REM n 4) 3) (SET 'v (part_of_simple n)) (append v (list '(- cos(ax)))))))
 
 (defun replace-all (string part replacement &key (test #'char=))
 "Returns a new string in which all the occurences of the part 
