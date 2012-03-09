@@ -4,7 +4,7 @@
 (in-package :differentiate)
 
 (defun cpp (n k) 
-    (if (= k 0) 1 
+    (if (= k 1) 1 
         (* (/ (+ (- n k) 1) k) (cpp n (- k 1)))))
 
 (DEFUN bk (n k) 
@@ -17,27 +17,30 @@
         ((<= k n) 
             (SET 'b (LIST (cpp n k)) ))))
 
-(DEFUN funu (n) (COND 
-                  ((= n 0) (SET 'u (list '1 'x^4))) 
-                  ((= n 1) (SET 'u (list '4 'x^3))) 
-                  ((= n 2) (SET 'u (list '12 'x^2))) 
-                  ((= n 3) (SET 'u (list '24 'x))) 
-                  ((= n 4) (SET 'u (list '24)))
-                  ((> n 4) (SET 'u (list '0)))))
 
 
 
-(defun part_of_simple (n) (cond 
-    ((= n 0) (set 'y ()))
-    ((not (= n 0)) (set 'y (list 'a^ n '*)))
+
+(defun part_of_simple (n a) (cond 
+    ((= n 1) (set 'y (list 1)))
+    ((not (= n 1)) (set 'y (list (expt a n))))
   ))
 
 ; производная от sin
-(DEFUN funv (n) (COND   
-        ((= (REM n 4) 0) (SET 'v (part_of_simple n)) (append v (list '(sin(ax)))))  
-        ((= (REM n 4) 1) (SET 'v (part_of_simple n)) (append v (list '(cos(ax)))))
-        ((= (REM n 4) 2) (SET 'v (part_of_simple n)) (append v (list '(- sin(ax)))))
-        ((= (REM n 4) 3) (SET 'v (part_of_simple n)) (append v (list '(- cos(ax)))))))
+(DEFUN funv (n a max_degree) (COND  
+        ((= (REM (+ n (rem max_degree 2)) 2) 1) (SET 'v (part_of_simple n a)) (append v  (list '*) '(cos) (list (list a 'x)) ))  
+        ((= (REM (+ n (rem max_degree 2)) 2) 0) (SET 'v (part_of_simple n a)) (append v  (list '*) '(sin) (list (list a 'x)) ))
+        ;((= (REM n 4) 2) (SET 'v (part_of_simple n a)) (append v (list '*) '(sin) (list (list a 'x)) ))
+        ;((= (REM n 4) 3) (SET 'v (part_of_simple n a)) (append v (list '*) '(sin) (list (list a 'x)) ))
+                  ))
+
+(defun sign_for_funv (n max_degree) (COND
+                                      ((= (REM (+ n (* max_degree 3)) 4) 0) (SET 'v '(+)))  
+                                      ((= (REM (+ n (* max_degree 3)) 4) 1) (SET 'v '(+)))
+                                      ((= (REM (+ n (* max_degree 3)) 4) 2) (SET 'v '(-)))
+                                      ((= (REM (+ n (* max_degree 3)) 4) 3) (SET 'v '(-)))           
+                                      ))
+                           
 
 (defun replace-all (string part replacement &key (test #'char=))
 "Returns a new string in which all the occurences of the part 
@@ -62,19 +65,34 @@ is replaced with replacement."
         (return (list sd))
   ))
 
+(DEFUN funu (n) (COND 
+                  ((= n 0) (SET 'u (list '1 'x^4))) 
+                  ((= n 1) (SET 'u (list '4 'x^3))) 
+                  ((= n 2) (SET 'u (list '12 'x^2))) 
+                  ((= n 3) (SET 'u (list '24 'x)))
+                  ((= n 4) (SET 'u (list '24 '1)))
+                  ((> n 4) (SET 'u (list '0 ())))))
+
 (DEFUN proizv (n) 
-  (prog NIL (SET 'pr ()) 
+  (prog NIL (SET 'pr ())
+        (print "type A")
+        (set 'a (read))
+        (print n)
+        ;(set 'n (- n 1))
+        (print n)
         (loop for i from 0 TO n DO 
               (set 'pr 
-                   (if (not (eq (car (funu (- n i))) 0))
+                   (if (not (eq (car (funu i)) 0))
                        (append pr 
-                               (append '(+)) 
-                               ;(bk n (- n i)) 
-                               
-                               (append (simplify (bk n (- n i)) (funu (- n i))))
+                               (append (sign_for_funv i (- n 1))) 
+                               (append 
+                                (simplify 
+                                 (simplify (bk n i) (funu i)) 
+                                 (funv i a n)))
                                (append '(*))
-                               (append (funv (- n i)))))))
-        (set 'pr (cdr pr))
+                               (append (cdr (funu i)))
+                               (append (cdr (funv i a n)))))))
+        ;(set 'pr (cdr pr))
         ;(print (write-to-string pr)) 
         (set 'res_str (write-to-string pr)) ; list in string
         (set 'res_str1 (replace-all res_str " " ""))
@@ -82,3 +100,5 @@ is replaced with replacement."
         ;(princ res_str1)
         (return res_str1)
         ))
+
+

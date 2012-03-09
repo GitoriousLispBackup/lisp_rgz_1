@@ -8,5 +8,6 @@
   (:use :cl)
   (:export
     proizv
+    proizv_with_a
    ))
 
