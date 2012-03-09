@@ -17,13 +17,13 @@
         ((<= k n) 
             (SET 'b (LIST (cpp_a n k)) ))))
 
-(DEFUN funu_a (n) (COND 
-                  ((= n 0) (SET 'u (list '1 'x^4))) 
-                  ((= n 1) (SET 'u (list '4 'x^3))) 
-                  ((= n 2) (SET 'u (list '12 'x^2))) 
-                  ((= n 3) (SET 'u (list '24 'x))) 
-                  ((= n 4) (SET 'u (list '24 '1)))
-                  ((> n 4) (SET 'u (list '0)))))
+(DEFUN funu_a (i) (COND 
+                  ((= i 0) (SET 'u (list '1 'x^4))) 
+                  ((= i 1) (SET 'u (list '4 'x^3))) 
+                  ((= i 2) (SET 'u (list '12 'x^2))) 
+                  ((= i 3) (SET 'u (list '24 'x))) 
+                  ((= i 4) (SET 'u (list '24 '1)))
+                  ((> i 4) (SET 'u (list '0)))))
 
 
 
@@ -81,9 +81,9 @@ is replaced with replacement."
 (DEFUN proizv_with_a (n) 
   (prog NIL (SET 'pr ()) 
         (loop for i from 0 TO n DO 
-              (set 'pr 
+              
                    (if (not (eq (car (funu_a i)) 0))
-                       (append pr 
+                       (set 'pr (append pr 
                                (append (sign_for_funv_a i (- n 1))) 
                                (append (simplify_a (bk_a n i) (funu_a i)))
                                (append '(*))
@@ -91,9 +91,15 @@ is replaced with replacement."
                                (append '(*))
                                (append (funv_a i n))))))
         ;(set 'pr (cdr pr))
-        ;(print (write-to-string pr)) 
-        (set 'res_str (write-to-string pr)) ; list in string
-        (set 'res_str1 (replace-all_a res_str " " ""))
+        ;(print pr) 
+        (set 'res_str (write-to-string pr :escape nil :right-margin 1000)) ; list in string
+        ;(set 'res_str1 (replace-all_a res_str "\n" ""))
+        (set 'res_str1 (replace-all_a res_str1 "^ " "^"))
+        (set 'res_str1 (replace-all_a res_str1 " * " "*"))
+        (set 'res_str1 (replace-all_a res_str1 " *" "*"))
+        (set 'res_str1 (replace-all_a res_str1 " (" "("))
+        (set 'res_str1 (replace-all_a res_str1 "(+ " ""))
+        (set 'res_str1 (replace-all_a res_str1 "))" ")"))
         (set 'res_str1 (replace-all_a res_str1 "DIFFERENTIATE::" ""))
         ;(princ res_str1)
         (return res_str1)
