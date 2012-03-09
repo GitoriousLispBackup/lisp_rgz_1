@@ -4,7 +4,7 @@
 (in-package :differentiate)
 
 (defun cpp (n k) 
-    (if (= k 1) 1 
+    (if (= k 0) 1 
         (* (/ (+ (- n k) 1) k) (cpp n (- k 1)))))
 
 (DEFUN bk (n k) 
@@ -16,8 +16,6 @@
             (print '(error3))) 
         ((<= k n) 
             (SET 'b (LIST (cpp n k)) ))))
-
-
 
 
 

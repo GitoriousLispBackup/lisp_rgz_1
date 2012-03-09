@@ -3,9 +3,9 @@
 
 (in-package :differentiate)
 
-(defun cpp (n k) 
+(defun cpp_a (n k) 
     (if (= k 0) 1 
-        (* (/ (+ (- n k) 1) k) (cpp n (- k 1)))))
+        (* (/ (+ (- n k) 1) k) (cpp_a n (- k 1)))))
 
 (DEFUN bk_a (n k) 
     (COND ((< k 0) 
@@ -15,14 +15,14 @@
         ((< n k) 
             (print '(error3))) 
         ((<= k n) 
-            (SET 'b (LIST (cpp n k)) ))))
+            (SET 'b (LIST (cpp_a n k)) ))))
 
 (DEFUN funu_a (n) (COND 
                   ((= n 0) (SET 'u (list '1 'x^4))) 
                   ((= n 1) (SET 'u (list '4 'x^3))) 
                   ((= n 2) (SET 'u (list '12 'x^2))) 
                   ((= n 3) (SET 'u (list '24 'x))) 
-                  ((= n 4) (SET 'u (list '24)))
+                  ((= n 4) (SET 'u (list '24 '1)))
                   ((> n 4) (SET 'u (list '0)))))
 
 
@@ -33,18 +33,19 @@
   ))
 
 ; производная от sin
-(DEFUN funv_a (n) (COND   
-        ((= (REM n 2) 0) (SET 'v (part_of_simple_a n)) (append v '(sin(ax))))  
-        ((= (REM n 2) 1) (SET 'v (part_of_simple_a n)) (append v '(cos(ax))))
+(DEFUN funv_a (n max_degree) (COND   
+        ((= (REM (+ n (rem max_degree 2)) 2) 1) (SET 'v (part_of_simple_a n)) (append v '(cos(ax))))  
+        ((= (REM (+ n (rem max_degree 2)) 2) 0) (SET 'v (part_of_simple_a n)) (append v '(sin(ax))))
         ;((= (REM n 4) 2) (SET 'v (part_of_simple_a n)) (append v (list '(- sin(ax)))))
         ;((= (REM n 4) 3) (SET 'v (part_of_simple_a n)) (append v (list '(- cos(ax)))))
                   ))
 
-(defun sign_for_funv_a_a (n) (COND
-                           ((= (REM n 4) 0) (SET 'v '(+)))  
-                           ((= (REM n 4) 1) (SET 'v '(+)))
-                           ((= (REM n 4) 2) (SET 'v '(-)))
-                           ((= (REM n 4) 3) (SET 'v '(-)))))
+(defun sign_for_funv_a (n max_degree) (COND
+                                      ((= (REM (+ n (* max_degree 3)) 4) 0) (SET 'v '(+)))  
+                                      ((= (REM (+ n (* max_degree 3)) 4) 1) (SET 'v '(+)))
+                                      ((= (REM (+ n (* max_degree 3)) 4) 2) (SET 'v '(-)))
+                                      ((= (REM (+ n (* max_degree 3)) 4) 3) (SET 'v '(-)))           
+                                      ))
                            
 
 (defun replace-all_a (string part replacement &key (test #'char=))
@@ -74,12 +75,13 @@ is replaced with replacement."
   (prog NIL (SET 'pr ()) 
         (loop for i from 0 TO n DO 
               (set 'pr 
-                   (if (not (eq (car (funu_a (- n i))) 0))
+                   (if (not (eq (car (funu_a i)) 0))
                        (append pr 
-                               (append (sign_for_funv_a_a (- n i))) 
-                               (append (simplify_a (bk_a n (- n i)) (funu_a (- n i))))
+                               (append (sign_for_funv_a i (- n 1))) 
+                               (append (simplify_a (bk_a n i) (funu_a i)))
                                (append '(*))
-                               (append (funv_a (- n i)))))))
+                               (append (cdr (funu i)))
+                               (append (funv_a i n))))))
         (set 'pr (cdr pr))
         ;(print (write-to-string pr)) 
         (set 'res_str (write-to-string pr)) ; list in string
