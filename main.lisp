@@ -19,15 +19,15 @@
 
 
 
-(defun part_of_simple (n a) (cond 
-    ((= n 1) (set 'y (list 1)))
-    ((not (= n 1)) (set 'y (list (expt a n))))
+(defun part_of_simple (n a max_degree) (cond 
+    ((= (- max_degree n) 0) (set 'y (list 1)))
+    ((not (= (- max_degree n) 0)) (set 'y (list (expt a (- max_degree n)))))
   ))
 
 ; производная от sin
 (DEFUN funv (n a max_degree) (COND  
-        ((= (REM (+ n (rem max_degree 2)) 2) 1) (SET 'v (part_of_simple n a)) (append v  (list '*) '(cos) (list (list a 'x)) ))  
-        ((= (REM (+ n (rem max_degree 2)) 2) 0) (SET 'v (part_of_simple n a)) (append v  (list '*) '(sin) (list (list a 'x)) ))
+        ((= (REM (+ n (rem max_degree 2)) 2) 1) (SET 'v (part_of_simple n a max_degree)) (append v  (list '*) '(cos) (list (list a 'x)) ))  
+        ((= (REM (+ n (rem max_degree 2)) 2) 0) (SET 'v (part_of_simple n a max_degree)) (append v  (list '*) '(sin) (list (list a 'x)) ))
         ;((= (REM n 4) 2) (SET 'v (part_of_simple n a)) (append v (list '*) '(sin) (list (list a 'x)) ))
         ;((= (REM n 4) 3) (SET 'v (part_of_simple n a)) (append v (list '*) '(sin) (list (list a 'x)) ))
                   ))
