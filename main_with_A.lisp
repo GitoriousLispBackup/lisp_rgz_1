@@ -27,15 +27,22 @@
 
 
 
-(defun part_of_simple_a (n) (cond 
-    ((= n 0) (set 'y ()))
-    ((not (= n 0)) (set 'y (list 'a^ n '*)))
+;(defun part_of_simple_a (n) (cond 
+;    ((= n 0) (set 'y ()))
+;    ((not (= n 0)) (set 'y (list 'a^ n '*)))
+;  ))
+
+
+(defun part_of_simple_a (n max_degree) (cond 
+    ((= (- max_degree n) 0) (set 'y ()))
+    ((not (= (- max_degree n) 0)) (set 'y (list 'a^ (- max_degree n) '*)))
   ))
+
 
 ; производная от sin
 (DEFUN funv_a (n max_degree) (COND   
-        ((= (REM (+ n (rem max_degree 2)) 2) 1) (SET 'v (part_of_simple_a n)) (append v '(cos(ax))))  
-        ((= (REM (+ n (rem max_degree 2)) 2) 0) (SET 'v (part_of_simple_a n)) (append v '(sin(ax))))
+        ((= (REM (+ n (rem max_degree 2)) 2) 1) (SET 'v (part_of_simple_a n max_degree)) (append v '(cos(ax))))  
+        ((= (REM (+ n (rem max_degree 2)) 2) 0) (SET 'v (part_of_simple_a n max_degree)) (append v '(sin(ax))))
         ;((= (REM n 4) 2) (SET 'v (part_of_simple_a n)) (append v (list '(- sin(ax)))))
         ;((= (REM n 4) 3) (SET 'v (part_of_simple_a n)) (append v (list '(- cos(ax)))))
                   ))
@@ -81,8 +88,9 @@ is replaced with replacement."
                                (append (simplify_a (bk_a n i) (funu_a i)))
                                (append '(*))
                                (append (cdr (funu i)))
+                               (append '(*))
                                (append (funv_a i n))))))
-        (set 'pr (cdr pr))
+        ;(set 'pr (cdr pr))
         ;(print (write-to-string pr)) 
         (set 'res_str (write-to-string pr)) ; list in string
         (set 'res_str1 (replace-all_a res_str " " ""))
