@@ -79,9 +79,10 @@ is replaced with replacement."
         ;(set 'n (- n 1))
         (print n)
         (loop for i from 0 TO n DO 
-              (set 'pr 
+              
                    (if (not (eq (car (funu i)) 0))
-                       (append pr 
+                       (set 'pr 
+                        (append pr 
                                (append (sign_for_funv i (- n 1))) 
                                (append 
                                 (simplify 
